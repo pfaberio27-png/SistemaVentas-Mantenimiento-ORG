@@ -26,7 +26,7 @@ public class VentaService {
         Cliente cliente = clienteService.buscarCliente(dniCliente);
 
         if (cliente == null) {
-            Console.error("Cliente no existe");
+            imprimirError("Cliente no existe");
             return;
         }
 
@@ -38,20 +38,19 @@ public class VentaService {
     // Code smell: repetición de mensajes y validaciones
     public void agregarProductoVenta(int idProducto, int cantidad) {
 
-        if (ventaActual == null) {
-            Console.error("No hay venta activa");
+        if (!validarVentaActiva()) {
             return;
         }
 
         Producto producto = productoService.buscarProducto(idProducto);
 
         if (producto == null) {
-            Console.error("Producto no encontrado");
+            imprimirError("Producto no encontrado");
             return;
         }
 
         if (!Validaciones.validarCantidad(cantidad)) {
-            Console.error("Cantidad inválida");
+            imprimirError("Cantidad inválida");
             return;
         }
 
@@ -61,8 +60,7 @@ public class VentaService {
 
     public void finalizarVenta() {
 
-        if (ventaActual == null) {
-            Console.error("No hay venta activa");
+        if (!validarVentaActiva()) {
             return;
         }
 
@@ -75,5 +73,25 @@ public class VentaService {
 
     public Venta obtenerVentaActual() {
         return ventaActual;
+    }
+
+    public void finalizarVenta2() {
+
+        if (!validarVentaActiva()) {
+            return;
+        }
+    }
+
+    private void imprimirError(String msg) {
+        Console.error("ERROR: " + msg);
+    }
+
+    private boolean validarVentaActiva() {
+        if (ventaActual == null) {
+            imprimirError("No hay venta activa");
+            return false;
+        }
+
+        return true;
     }
 }
